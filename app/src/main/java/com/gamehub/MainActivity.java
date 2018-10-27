@@ -1,13 +1,12 @@
 package com.gamehub;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
-
-    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +21,13 @@ public class MainActivity extends Activity {
     }
 
     public void onTTTClick(View view) {
+        TextView tView = findViewById(R.id.textView);
+        tView.setText("TTT clicked..");
+        startActivity(new Intent(this, TicTacToeActivity.class));
+    }
 
-        this.view = view;
+    public void onSnakeClick(View view) {
+        TextView tView = findViewById(R.id.textView);
+        tView.setText("Snake clicked..");
     }
 }

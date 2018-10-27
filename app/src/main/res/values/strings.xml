@@ -3,4 +3,6 @@
     <string name="helloWorld">Hello World!</string>
     <string name="btnTest">Click me!</string>
     <string name="btnTTT">Tic Tac Toe</string>
+    <string name="imageTTT">This is the demo pic for TTT</string>
+    <string name="imageSnake">This is the basic snake image</string>
 </resources>

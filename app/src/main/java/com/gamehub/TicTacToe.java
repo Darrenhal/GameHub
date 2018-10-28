@@ -36,8 +36,7 @@ public class TicTacToe extends SurfaceView implements Runnable{
             int x = canvas.getWidth();
             int y = canvas.getHeight();
 
-
-            this.paint.setColor(Color.BLUE);
+            this.paint.setColor(Color.argb(255, 186, 250, 255));
             canvas.drawColor(this.paint.getColor());
 
             this.paint.setColor(Color.RED);
@@ -53,7 +52,6 @@ public class TicTacToe extends SurfaceView implements Runnable{
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        this.draw();
         return true;
     }
 

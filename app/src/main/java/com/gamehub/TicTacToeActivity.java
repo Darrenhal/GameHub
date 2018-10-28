@@ -6,20 +6,31 @@ import android.view.View;
 
 public class TicTacToeActivity extends Activity {
 
+    private TicTacToe ttt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tic_tac_toe);
-
         View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        decorView.setSystemUiVisibility(uiOptions);
 
-
+        ttt = new TicTacToe(this);
+        setContentView(ttt);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ttt.resume();
+    }
+
+   @Override
+    protected void onPause() {
+        super.onPause();
+        ttt.pause();
+    }
+
 }

@@ -9,7 +9,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class TicTacToe extends SurfaceView implements Runnable{
+public class Thread_Drawing_Sample extends SurfaceView implements Runnable{
 
     private long nextFrameTime;
     private SurfaceHolder surfaceHolder;
@@ -18,7 +18,7 @@ public class TicTacToe extends SurfaceView implements Runnable{
     public Thread thread;
 
 
-    public TicTacToe(Context context) {
+    public Thread_Drawing_Sample(Context context) {
         super(context);
 
         this.thread = null;

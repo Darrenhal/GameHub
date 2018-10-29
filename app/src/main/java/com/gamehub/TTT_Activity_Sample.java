@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
-public class TicTacToeActivity extends Activity {
+public class TTT_Activity_Sample extends Activity {
 
-    private TicTacToe ttt;
+    private Thread_Drawing_Sample ttt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +17,7 @@ public class TicTacToeActivity extends Activity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
 
-        ttt = new TicTacToe(this);
+        ttt = new Thread_Drawing_Sample(this);
         setContentView(ttt);
     }
 

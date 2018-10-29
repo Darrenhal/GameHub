@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+
+import com.gamehub.Snake.SnakeActivity;
+import com.gamehub.TicTacToe.TicTacToeActivity;
+import com.gamehub.TwentyFortyEight.Twenty48Activity;
 
 public class MainActivity extends Activity {
 
@@ -14,20 +17,15 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
     }
 
-    public void buttonTest(View view) {
-        long millis = System.currentTimeMillis();
-        TextView tView = findViewById(R.id.textView);
-        tView.setText("Hello World: " + millis);
-    }
-
     public void onTTTClick(View view) {
-        TextView tView = findViewById(R.id.textView);
-        tView.setText("TTT clicked..");
         startActivity(new Intent(this, TicTacToeActivity.class));
     }
 
     public void onSnakeClick(View view) {
-        TextView tView = findViewById(R.id.textView);
-        tView.setText("Snake clicked..");
+        startActivity(new Intent(this, SnakeActivity.class));
+    }
+
+    public void on2048Click (View view) {
+        startActivity(new Intent(this, Twenty48Activity.class));
     }
 }

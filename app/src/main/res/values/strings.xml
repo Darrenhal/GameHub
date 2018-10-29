@@ -5,4 +5,5 @@
     <string name="btnTTT">Tic Tac Toe</string>
     <string name="imageTTT">This is the demo pic for TTT</string>
     <string name="imageSnake">This is the basic snake image</string>
+    <string name="imageTwenty48">This is the demo pic for 2048</string>
 </resources>

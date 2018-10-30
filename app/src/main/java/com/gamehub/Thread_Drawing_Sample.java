@@ -64,8 +64,6 @@ public class Thread_Drawing_Sample extends SurfaceView implements Runnable{
                 this.nextFrameTime = System.currentTimeMillis() + 1000;
                 this.draw();
             }
-            //////////////////////// to not make it crash, doesn't close correctly yet
-            //this.isPlaying = false;
         }
     }
 

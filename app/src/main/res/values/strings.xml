@@ -6,4 +6,8 @@
     <string name="imageTTT">This is the demo pic for TTT</string>
     <string name="imageSnake">This is the basic snake image</string>
     <string name="imageTwenty48">This is the demo pic for 2048</string>
+    <string name="highscore2048">High Score: 0</string>
+    <string name="btnReset">Reset</string>
+    <string name="high_score2048">High Score:</string>
+    <string name="current_score2048">Score:</string>
 </resources>

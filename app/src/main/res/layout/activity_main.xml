@@ -31,7 +31,7 @@
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/imageTwenty48"
         android:onClick="on2048Click"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/twenty48_image"
         app:layout_constraintBottom_toTopOf="@+id/snakeIV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

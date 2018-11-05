@@ -25,8 +25,12 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
     private float downX, downY, upX, upY;
     private boolean isBtnDown, isBtnUp;
 
-    // store coordinates for labels
-    private int[][] tileArray;
+    // store coordinates for tiles
+    private Twenty48_Coordinate[] tileCoordinateArray;
+
+    // store information about tiles
+    private Twenty48_Tile[] tileArray;
+    private boolean[] isTileSetArray;
 
     public Twenty48_Engine(Context context) {
         super(context);
@@ -35,7 +39,9 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
         this.score = 0;
         this.surfaceHolder = getHolder();
         this.paint = new Paint();
-        this.tileArray = new int[16][];
+        this.tileCoordinateArray = new Twenty48_Coordinate[16];
+        this.tileArray = new Twenty48_Tile[16];
+        this.isTileSetArray = new boolean[16];
 
         downX = downY = upX = upY = 0.0f;
         isBtnDown = isBtnUp = false;
@@ -46,6 +52,23 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
         this.high_score = 0;
 
         this.nextFrame = System.currentTimeMillis() + 40;
+
+        this.startGame();
+    }
+
+    private void startGame() {
+        // initialize empty board
+        for(int i = 0; i < isTileSetArray.length; i++) {
+            isTileSetArray[i] = false;
+            tileArray[i] = null;
+        }
+    }
+
+    private void spawnTile() {
+        isTileSetArray[7] = true;
+        tileArray[7] = new Twenty48_Tile(tileCoordinateArray[7].startX, tileCoordinateArray[7].startY, tileCoordinateArray[7].endX, tileCoordinateArray[7].endY, 2);
+        isTileSetArray[13] = true;
+        tileArray[13] = new Twenty48_Tile(tileCoordinateArray[13].startX, tileCoordinateArray[13].startY, tileCoordinateArray[13].endX, tileCoordinateArray[13].endY, 4);
     }
 
     private void update() {
@@ -114,13 +137,33 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
             if (canvas != null) {
                 drawBoard(canvas);
                 drawScoreBoard(canvas);
+                drawUpdateToBoard(canvas);
+                spawnTile();
             }
             this.surfaceHolder.unlockCanvasAndPost(canvas);
         }
     }
 
-    private Canvas drawScoreBoard(Canvas c) {
-        Canvas canvas = c;
+    private void drawUpdateToBoard(Canvas canvas) {
+        for (Object o : tileArray) {
+            if (o != null) {
+                Twenty48_Tile tile = (Twenty48_Tile) o;
+                // draw colored tile
+                paint.setColor(Color.argb(255, tile.color.red, tile.color.green, tile.color.blue));
+                canvas.drawRect(tile.startX, tile.startY, tile.endX, tile.endY, paint);
+                // draw number to tile
+                paint.setColor(Color.DKGRAY);
+                paint.setTextSize(80f);
+                paint.setTextAlign(Paint.Align.CENTER);
+                float textX = tile.startX + ((tile.endX - tile.startX) / 2);
+                float textY = tile.startY + ((tile.endY - tile.startY) / 2) - (paint.descent() + paint.ascent() / 2);
+                canvas.drawText(Integer.toHexString(tile.value), textX, textY, paint);
+                paint.setTextAlign(Paint.Align.LEFT);
+            }
+        }
+    }
+
+    private void drawScoreBoard(Canvas canvas) {
         int height = canvas.getHeight();
         int width = canvas.getWidth();
 
@@ -149,12 +192,9 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
 
         paint.setTextSize(128f);
         canvas.drawText("0x800", titleX, titleY, paint);
-
-        return canvas;
     }
 
-    private Canvas drawBoard(Canvas c) {
-        Canvas canvas = c;
+    private void drawBoard(Canvas canvas) {
         int height = canvas.getHeight();
         int width = canvas.getWidth();
 
@@ -182,10 +222,9 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
                 tileEndX = boardX + (tileOffset * (j + 1)) + (tileLength * (j + 1));
                 tileEndY = boardY + (tileOffset * (i + 1)) + (tileLength * (i + 1));
                 canvas.drawRect(tileStartX, tileStartY, tileEndX, tileEndY, paint);
-                tileArray[(i * 4) + j] = new int[] {tileStartX, tileStartY, tileEndX, tileEndY};
+                tileCoordinateArray[(i * 4) + j] = new Twenty48_Coordinate(tileStartX, tileStartY, tileEndX, tileEndY);
             }
         }
-        return canvas;
     }
 
     @Override
@@ -214,7 +253,7 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
                 this.draw();
                 // 20 frames per second
                 // UNSAFE, but close to
-                this.nextFrame = System.currentTimeMillis() + 50;
+                this.nextFrame += 50;
             }
         }
     }

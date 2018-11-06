@@ -1,6 +1,7 @@
 package com.gamehub.Snake;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -26,6 +27,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private long nextFrameTime;
     private final long FPS = 10;
     private final long MILLIS_PER_SECOND = 1000;
+    private int resourceIdNavigation = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+    private int resourceIdStatus = getResources().getIdentifier("status_bar_height", "dimen", "android");
+
+    final TypedArray styledAttributes = getContext().getTheme().obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
+
+
+    private int navigationBarHeight = 0;
+    private int statusBarHeight = 0;
+    private int actionBarHeight = 0;
 
     private int score;
     private int[] snakeXs;
@@ -39,10 +49,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     public SnakeEngine(Context context, Point size){
         super(context);
 
-        context = context;
+        this.context = context;
+
+        navigationBarHeight = getResources().getDimensionPixelSize(resourceIdNavigation);
+        statusBarHeight = getResources().getDimensionPixelSize(resourceIdStatus);
+        actionBarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
 
         screenX = size.x;
-        screenY = size.y;
+        screenY = size.y - (navigationBarHeight+statusBarHeight+actionBarHeight);
 
         blockSize = screenX / NUM_BLOCKS_WIDE;
         numBlocksHigh = screenY / blockSize;
@@ -163,7 +178,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     public void draw(){
         if(surfaceHolder.getSurface().isValid()){
             canvas = surfaceHolder.lockCanvas();
-            canvas.drawColor(Color.BLUE);
+            canvas.drawColor(Color.BLACK);
             paint.setColor(Color.WHITE);
             paint.setTextSize(90);
             canvas.drawText("Score: " + score, 10, 70, paint);

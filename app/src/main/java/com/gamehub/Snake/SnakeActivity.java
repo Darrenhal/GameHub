@@ -16,7 +16,7 @@ public class SnakeActivity extends Activity {
         super.onCreate(savedInstanceState);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
-        display.getSize(size);
+        display.getRealSize(size);
         snakeEngine = new SnakeEngine(this, size);
         setContentView(snakeEngine);
     }

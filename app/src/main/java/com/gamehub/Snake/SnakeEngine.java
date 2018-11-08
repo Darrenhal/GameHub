@@ -10,12 +10,16 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.media.MediaPlayer;
 import android.app.Activity;
+
+import com.gamehub.R;
 
 import java.util.Random;
 
 public class SnakeEngine extends SurfaceView implements Runnable {
 
+    private MediaPlayer mediaPlayer;
     private SnakeActivity snakeActivity;
     private Thread thread = null;
     private Context context;
@@ -54,6 +58,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         this.context = context;
         this.snakeActivity = snakeActivity;
+
 
         navigationBarHeight = getResources().getDimensionPixelSize(resourceIdNavigation);
         statusBarHeight = getResources().getDimensionPixelSize(resourceIdStatus);
@@ -107,6 +112,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         spawnApple();
         score = 0;
         nextFrameTime = System.currentTimeMillis();
+        mediaPlayer = MediaPlayer.create(snakeActivity.getApplicationContext(), R.raw.snakemusic);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
     }
 
     public void spawnApple(){
@@ -175,6 +183,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         moveSnake();
 
         if(death()){
+            mediaPlayer.stop();
             Intent intent = new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class);
             intent.putExtra("Score: ",score);
 

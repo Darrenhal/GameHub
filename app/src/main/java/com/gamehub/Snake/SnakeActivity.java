@@ -21,6 +21,7 @@ public class SnakeActivity extends Activity {
         snakeEngine = new SnakeEngine(this,this, size);
         setContentView(snakeEngine);
 
+
     }
 
      protected void onResume(){

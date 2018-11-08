@@ -1,6 +1,7 @@
 package com.gamehub.Snake;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
@@ -17,8 +18,9 @@ public class SnakeActivity extends Activity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getRealSize(size);
-        snakeEngine = new SnakeEngine(this, size);
+        snakeEngine = new SnakeEngine(this,this, size);
         setContentView(snakeEngine);
+
     }
 
      protected void onResume(){

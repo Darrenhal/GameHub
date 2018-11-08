@@ -16,15 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".TTT_Activity_Sample"
-            android:parentActivityName=".MainActivity" />
         <activity android:name=".TicTacToe.TicTacToeActivity"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".Snake.SnakeActivity"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".TwentyFortyEight.Twenty48Activity"
             android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".Snake.SnakeGameOver"
+            android:parentActivityName=".Snake.SnakeActivity"/>
     </application>
 
 </manifest>

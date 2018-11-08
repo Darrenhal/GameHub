@@ -1,6 +1,7 @@
 package com.gamehub.Snake;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,11 +10,13 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.app.Activity;
 
 import java.util.Random;
 
 public class SnakeEngine extends SurfaceView implements Runnable {
 
+    private SnakeActivity snakeActivity;
     private Thread thread = null;
     private Context context;
     public enum Heading{UP,RIGHT,DOWN,LEFT};
@@ -46,10 +49,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private SurfaceHolder surfaceHolder;
     private Paint paint;
 
-    public SnakeEngine(Context context, Point size){
+    public SnakeEngine(Context context, SnakeActivity snakeActivity, Point size){
         super(context);
 
         this.context = context;
+        this.snakeActivity = snakeActivity;
 
         navigationBarHeight = getResources().getDimensionPixelSize(resourceIdNavigation);
         statusBarHeight = getResources().getDimensionPixelSize(resourceIdStatus);
@@ -171,7 +175,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         moveSnake();
 
         if(death()){
-            newGame();
+            Intent intent = new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class);
+            intent.putExtra("Score: ",score);
+
+            //newGame();
+            snakeActivity.startActivity(new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class));
         }
     }
 

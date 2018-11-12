@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.os.Process;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -20,6 +21,7 @@ import java.util.Random;
 public class SnakeEngine extends SurfaceView implements Runnable {
 
     private MediaPlayer mediaPlayer;
+    private int mediaposition;
     private SnakeActivity snakeActivity;
     private Thread thread = null;
     private Context context;
@@ -92,6 +94,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     public void onPause(){
         mediaPlayer.pause();
+        mediaposition = mediaPlayer.getCurrentPosition();
         isPlaying = false;
         try{
             thread.join();
@@ -100,7 +103,12 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
     }
 
+    public void onDestroy(){
+        mediaPlayer.stop();
+    }
+
     public void resume(){
+        //mediaPlayer.seekTo(mediaposition);
         isPlaying = true;
         thread = new Thread(this);
         thread.start();
@@ -187,6 +195,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             mediaPlayer.stop();
             Intent intent = new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class);
             intent.putExtra("Score: ",score);
+            snakeActivity.finish();
             snakeActivity.startActivity(new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class));
         }
     }

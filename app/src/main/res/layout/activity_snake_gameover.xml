@@ -31,6 +31,13 @@
         android:textAllCaps="false"
         android:onClick="newGame" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exit"
+        android:textAllCaps="false"
+        android:onClick="exit" />
+
 
 
 </LinearLayout>

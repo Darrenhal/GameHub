@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Process;
 import android.view.Display;
 
 import com.gamehub.R;
@@ -32,5 +33,11 @@ public class SnakeActivity extends Activity {
     protected void onPause(){
         super.onPause();
         snakeEngine.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        snakeEngine.onDestroy();
     }
 }

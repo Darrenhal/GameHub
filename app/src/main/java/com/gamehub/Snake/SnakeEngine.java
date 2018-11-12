@@ -91,6 +91,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     }
 
     public void onPause(){
+        mediaPlayer.pause();
         isPlaying = false;
         try{
             thread.join();
@@ -186,8 +187,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             mediaPlayer.stop();
             Intent intent = new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class);
             intent.putExtra("Score: ",score);
-
-            //newGame();
             snakeActivity.startActivity(new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class));
         }
     }

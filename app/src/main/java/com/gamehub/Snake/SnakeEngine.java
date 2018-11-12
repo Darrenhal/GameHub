@@ -192,7 +192,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         moveSnake();
 
         if(death()){
-            mediaPlayer.stop();
             Intent intent = new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class);
             intent.putExtra("Score: ",score);
             snakeActivity.finish();
@@ -210,6 +209,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             for(int i = 0; i < snakeLength; i++){
                 canvas.drawRect(snakeXs[i] * blockSize,(snakeYs[i] * blockSize),(snakeXs[i] * blockSize) + blockSize, (snakeYs[i] * blockSize) + blockSize, paint);
             }
+            canvas.drawLine(0,0,0, numBlocksHigh * blockSize, paint);
+            canvas.drawLine(0,0,NUM_BLOCKS_WIDE * blockSize, 0, paint);
+            canvas.drawLine(NUM_BLOCKS_WIDE * blockSize,numBlocksHigh * blockSize,NUM_BLOCKS_WIDE * blockSize, 0, paint);
+            canvas.drawLine(NUM_BLOCKS_WIDE * blockSize,numBlocksHigh * blockSize,0, numBlocksHigh * blockSize, paint);
             paint.setColor(Color.RED);
             canvas.drawRect(appleX * blockSize,(appleY * blockSize),(appleX * blockSize)+blockSize,(appleY * blockSize)+blockSize,paint);
             surfaceHolder.unlockCanvasAndPost(canvas);

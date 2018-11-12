@@ -27,10 +27,10 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
     private boolean isBtnDown, isBtnUp;
 
     // arrays to track board and game information
-    private Twenty48_Coordinate[] tileCoordinateArray;
-    private Twenty48_UiElement[] uiElementArray;
-    private Twenty48_Tile[] tileArray;
-    private boolean[] isTileSetArray;
+    private Twenty48_Coordinate[] tileCoordinateArray = new Twenty48_Coordinate[16];
+    private Twenty48_UiElement[] uiElementArray = new Twenty48_UiElement[4];
+    private Twenty48_Tile[] tileArray = new Twenty48_Tile[16];
+    private boolean[] isTileSetArray = new boolean[16];
 
     public Twenty48_Engine(Context context) {
         super(context);
@@ -45,11 +45,6 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
 
         surfaceHolder = getHolder();
         paint = new Paint();
-
-        tileCoordinateArray = new Twenty48_Coordinate[16];
-        tileArray = new Twenty48_Tile[16];
-        isTileSetArray = new boolean[16];
-        uiElementArray = new Twenty48_UiElement[4];
 
         for(int i = 0; i < 16; i++) {
             isTileSetArray[i] = false;
@@ -157,6 +152,13 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
                 paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
                 canvas.drawText("Score", score.startX, score.startY - 7, paint);
                 canvas.drawText("Best", best.startX, best.startY-  7, paint);
+                paint.setTextSize(40f);
+                paint.setTextAlign(Paint.Align.CENTER);
+                float scoreTextX = score.startX + ((score.endX - score.startX) / 2);
+                float scoreTextY = score.startY + ((score.endY - score.startY) / 2) - (paint.descent() +
+                        paint.ascent() / 2);
+                canvas.drawText(Integer.toString(this.score), scoreTextX, scoreTextY, paint);
+                paint.setTextAlign(Paint.Align.LEFT);
                 paint.setTextSize(128f);
                 canvas.drawText("0x800", title.startX, title.startY, paint);
                 // draw tiles to board
@@ -187,7 +189,7 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
     }
 
     private void endGame() {
-
+        isPlaying = false;
         Log.d("Syso", "Game ended.....");
     }
 
@@ -238,8 +240,149 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
     }
 
     private void processSwipe(String s) {
+        // valueMerged holds the total value of tile merging this round
+        int valueMerged = 0;
+        // indices for all 4 tiles in a row/column
+        int i1, i2, i3, i4;
+        boolean movementHappened = false;
+        for (int a = 0; a < 4; a++) {
+            switch (s) {
+                case "up":
+                    i1 = a;
+                    i2 = a + 4;
+                    i3 = a + 8;
+                    i4 = a + 12;
+                    break;
+                case "left":
+                    i1 = 4 * a;
+                    i2 = 4 * a + 1;
+                    i3 = 4 * a + 2;
+                    i4 = 4 * a + 3;
+                    break;
+                case "down":
+                    i1 = a + 12;
+                    i2 = a + 8;
+                    i3 = a + 4;
+                    i4 = a;
+                    break;
+                case "right":
+                    i1 = 4 * a + 3;
+                    i2 = 4 * a + 2;
+                    i3 = 4 * a + 1;
+                    i4 = 4 * a;
+                    break;
+                default:
+                    i1 = i2 = i3 = i4 = 0;
+                    break;
 
-        Log.d("Syso", s);
+            }
+            // Start moving tiles
+            // no need to check for tile 1 movement
+            // check tile 2
+            if (isTileSetArray[i2]) {
+                if (!isTileSetArray[i1]) {
+                    // move pos 2 to pos 1
+                    isTileSetArray[i2] = false;
+                    isTileSetArray[i1] = true;
+                    tileArray[i1] = new Twenty48_Tile(tileCoordinateArray[i1].startX, tileCoordinateArray[i1].startY, tileCoordinateArray[i1].endX, tileCoordinateArray[i1].endY, tileArray[i2].value);
+                    tileArray[i2] = null;
+                    movementHappened = true;
+                } else if (tileArray[i2].value == tileArray[i1].value) {
+                    // merge pos 2 and pos 1
+                    isTileSetArray[i2] = false;
+                    tileArray[i1] = new Twenty48_Tile(tileCoordinateArray[i1].startX, tileCoordinateArray[i1].startY, tileCoordinateArray[i1].endX, tileCoordinateArray[i1].endY, tileArray[i2].value * 2);
+                    tileArray[i2] = null;
+                    movementHappened = true;
+                    valueMerged += tileArray[i1].value;
+                }
+            }
+            // check tile 3
+            if (isTileSetArray[i3]) {
+                if (!isTileSetArray[i2]) {
+                    if (!isTileSetArray[i1]) {
+                        // move pos 3 to pos 1
+                        isTileSetArray[i3] = false;
+                        isTileSetArray[i1] = true;
+                        tileArray[i1] = new Twenty48_Tile(tileCoordinateArray[i1].startX, tileCoordinateArray[i1].startY, tileCoordinateArray[i1].endX, tileCoordinateArray[i1].endY, tileArray[i3].value);
+                        tileArray[i3] = null;
+                        movementHappened = true;
+                    } else if (tileArray[i3].value == tileArray[i1].value) {
+                        // merge pos 3 and pos 1
+                        isTileSetArray[i3] = false;
+                        tileArray[i1] = new Twenty48_Tile(tileCoordinateArray[i1].startX, tileCoordinateArray[i1].startY, tileCoordinateArray[i1].endX, tileCoordinateArray[i1].endY, tileArray[i3].value * 2);
+                        tileArray[i3] = null;
+                        movementHappened = true;
+                        valueMerged += tileArray[i1].value;
+                    } else {
+                        // move pos 3 to pos 2
+                        isTileSetArray[i3] = false;
+                        isTileSetArray[i2] = true;
+                        tileArray[i2] = new Twenty48_Tile(tileCoordinateArray[i2].startX, tileCoordinateArray[i2].startY, tileCoordinateArray[i2].endX, tileCoordinateArray[i2].endY, tileArray[i3].value);
+                        tileArray[i3] = null;
+                        movementHappened = true;
+                    }
+                } else if (tileArray[i3].value == tileArray[i2].value) {
+                    // merge pos 3 and pos 2
+                    isTileSetArray[i3] = false;
+                    tileArray[i2] = new Twenty48_Tile(tileCoordinateArray[i2].startX, tileCoordinateArray[i2].startY, tileCoordinateArray[i2].endX, tileCoordinateArray[i2].endY, tileArray[i3].value * 2);
+                    tileArray[i3] = null;
+                    movementHappened = true;
+                    valueMerged += tileArray[i2].value;
+                }
+            }
+            // check tile 4
+            if (isTileSetArray[i4]) {
+                if (!isTileSetArray[i3]) {
+                    if (!isTileSetArray[i2]) {
+                        if (!isTileSetArray[i1]) {
+                            // move pos 4 to pos 1
+                            isTileSetArray[i4] = false;
+                            isTileSetArray[i1] = true;
+                            tileArray[i1] = new Twenty48_Tile(tileCoordinateArray[i1].startX, tileCoordinateArray[i1].startY, tileCoordinateArray[i1].endX, tileCoordinateArray[i1].endY, tileArray[i4].value);
+                            tileArray[i4] = null;
+                            movementHappened = true;
+                        } else if (tileArray[i4].value == tileArray[i1].value) {
+                            // merge pos 4 and pos 1
+                            isTileSetArray[i4] = false;
+                            tileArray[i1] = new Twenty48_Tile(tileCoordinateArray[i1].startX, tileCoordinateArray[i1].startY, tileCoordinateArray[i1].endX, tileCoordinateArray[i1].endY, tileArray[i4].value * 2);
+                            tileArray[i4] = null;
+                            movementHappened = true;
+                            valueMerged += tileArray[i1].value;
+                        } else {
+                            // move pos 4 to pos 2
+                            isTileSetArray[i4] = false;
+                            isTileSetArray[i2] = true;
+                            tileArray[i2] = new Twenty48_Tile(tileCoordinateArray[i2].startX, tileCoordinateArray[i2].startY, tileCoordinateArray[i2].endX, tileCoordinateArray[i2].endY, tileArray[i4].value);
+                            tileArray[i4] = null;
+                            movementHappened = true;
+                        }
+                    } else if (tileArray[i4].value == tileArray[i2].value) {
+                        // merge pos 4 and pos 2
+                        isTileSetArray[i4] = false;
+                        tileArray[i2] = new Twenty48_Tile(tileCoordinateArray[i2].startX, tileCoordinateArray[i2].startY, tileCoordinateArray[i2].endX, tileCoordinateArray[i2].endY, tileArray[i4].value * 2);
+                        tileArray[i4] = null;
+                        movementHappened = true;
+                        valueMerged += tileArray[i2].value;
+                    } else {
+                        // move pos 4 to pos 3
+                        isTileSetArray[i4] = false;
+                        isTileSetArray[i3] = true;
+                        tileArray[i3] = new Twenty48_Tile(tileCoordinateArray[i3].startX, tileCoordinateArray[i3].startY, tileCoordinateArray[i3].endX, tileCoordinateArray[i3].endY, tileArray[i4].value);
+                        tileArray[i4] = null;
+                        movementHappened = true;
+                    }
+                } else if (tileArray[i4].value == tileArray[i3].value) {
+                    // merge pos 4 and pos 3
+                    isTileSetArray[i4] = false;
+                    tileArray[i3] = new Twenty48_Tile(tileCoordinateArray[i3].startX, tileCoordinateArray[i3].startY, tileCoordinateArray[i3].endX, tileCoordinateArray[i3].endY, tileArray[i4].value * 2);
+                    tileArray[i4] = null;
+                    movementHappened = true;
+                    valueMerged += tileArray[i3].value;
+                }
+            }
+        }
+        score += valueMerged;
+        if (movementHappened) spawnTile();
     }
 
     @SuppressLint("ClickableViewAccessibility")

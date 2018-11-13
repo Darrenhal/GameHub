@@ -7,8 +7,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,8 +18,6 @@ import android.widget.Toast;
 import com.gamehub.R;
 
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class TicTacToe_Engine extends View  {
 
@@ -32,16 +28,18 @@ public class TicTacToe_Engine extends View  {
 
     private String buttonTag, buttonText, buttonX, buttonY;
 
-    private boolean player1Turn;
+    private boolean player1Turn, possibleWin;
 
     private int roundCount;
 
-    private int player1Points, player2Points;
+    private int player1Points, player2Points, checkForPossibleWinCounter, possibleWinSound;
+
+    private Button possbileWinButton;
 
     private TextView textViewPlayer1, textViewPlayer2;
 
     private SoundPool spButton;
-    private int tictactoebutton, tictactoebackground, tictactoepossiblewin1, tictactoepossiblewin2, tictactoewin;
+    private int tictactoebutton, tictactoebackground, tictactoepossiblewin1, tictactoepossiblewin2,tictactoewin1, tictactoewin2;
 
     private MediaPlayer mp;
 
@@ -61,6 +59,10 @@ public class TicTacToe_Engine extends View  {
 
         player1Points = 0;
         player2Points = 0;
+
+        possibleWin = false;
+
+        checkForPossibleWinCounter = 0;
 
         field = new String[3][3];
         for (int i = 0; i < 3; i++) {
@@ -87,10 +89,12 @@ public class TicTacToe_Engine extends View  {
         tictactoebutton = spButton.load(context, R.raw.tictactoebutton, 1);
         tictactoepossiblewin1 = spButton.load(context, R.raw.tictactoepossiblewin1, 1);
         tictactoepossiblewin2 = spButton.load(context, R.raw.tictactoepossiblewin2, 1);
-        tictactoewin = spButton.load(context, R.raw.tictactoewin, 1);
+        tictactoewin1 = spButton.load(context, R.raw.tictactoewin1, 1);
+        tictactoewin2 = spButton.load(context, R.raw.tictactoewin2, 1);
 
         mp = MediaPlayer.create(activity, R.raw.tictactoebackground);
         mp.setLooping(true);
+        mp.setVolume((float) 0.5, (float) 0.5);
         mp.start();
 
         rdm = new Random();
@@ -99,17 +103,41 @@ public class TicTacToe_Engine extends View  {
 
 
     public void buttonClick(View v) {
-        spButton.play(tictactoebutton, 1, 1, 0, 0, 1);
+        if(!possibleWin) {
+            spButton.play(tictactoebutton, 1, 1, 0, 0, 1);
 
-        if (!((Button) v).getText().toString().equals("")) return;
+            if (!((Button) v).getText().toString().equals("")) return;
 
-        if (player1Turn) {
-            ((Button) v).setText("X");
+            if (player1Turn) {
+                ((Button) v).setText("X");
+            } else {
+                ((Button) v).setText("O");
+            }
+
+            roundCount++;
+
+            possibleWin = checkForPossibleWin();
+        } else if (possbileWinButton == v) {
+            if(possibleWinSound == 0) {
+                spButton.play(tictactoewin1, 1, 1,0,0,1);
+            } else {
+                spButton.play(tictactoewin2, 1, 1, 0, 0, 1);
+            }
+
+            if (player1Turn) {
+                ((Button) v).setText("X");
+                player1Wins();
+            } else {
+                ((Button) v).setText("O");
+                player2Wins();
+            }
         } else {
-            ((Button) v).setText("O");
+            if(possibleWinSound == 0) {
+                spButton.play(tictactoepossiblewin1, 1, 1, 0, 0, 1);
+            } else {
+                spButton.play(tictactoepossiblewin2, 1, 1, 0, 0, 1);
+            }
         }
-
-        roundCount++;
 
         if (checkForWin(v)) {
             if (player1Turn) {
@@ -122,6 +150,7 @@ public class TicTacToe_Engine extends View  {
         } else {
             player1Turn = !player1Turn;
         }
+
     }
 
     private boolean checkForWin(View v) {
@@ -164,66 +193,69 @@ public class TicTacToe_Engine extends View  {
                 return true;
             }
         }
-        return checkForPossibleWin();
+        return false;
     }
 
     public boolean checkForPossibleWin() {
-        int sound = rdm.nextInt(2);
-        Button button;
-        String buttonID;
-        int resID;
 
-        for( int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        if(checkForPossibleWinCounter < 1) {
+            possibleWinSound = rdm.nextInt(2);
+            String buttonID;
+            int resID;
 
-                if((field[i][j].equals("")
-                        && !field[(i+1)%3][j].equals("")
-                        && field[(i+2)%3][j].equals(field[(i+1)%3][j]))
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
 
-                    ||
+                    if ((field[i][j].equals("")
+                            && !field[(i + 1) % 3][j].equals("")
+                            && field[(i + 2) % 3][j].equals(field[(i + 1) % 3][j]))
 
-                    (field[i][j].equals("")
-                        && !field[i][(j+1)%3].equals("")
-                        && field[i][(j+2)%3].equals(field[i][(j+1)%3]))
+                            ||
 
-                    ||
+                            (field[i][j].equals("")
+                                    && !field[i][(j + 1) % 3].equals("")
+                                    && field[i][(j + 2) % 3].equals(field[i][(j + 1) % 3]))
 
-                    (field[i][i].equals("")
-                        && !field[(i+1)%3][(j+1)%3].equals("")
-                        && field[(i+2)%3][(j+2)%3].equals(field[(i+1)%3][(j+1)%3])))
-                {
+                            ||
 
-                    buttonID = "button_" + i + j;
-                    resID = activity.getResources().getIdentifier(buttonID, "id", activity.getPackageName());
-                    button = activity.findViewById(resID);
+                            (field[i][j].equals("")
+                                    && !field[(i + 1) % 3][(j + 1) % 3].equals("")
+                                    && field[(i + 2) % 3][(j + 2) % 3].equals(field[(i + 1) % 3][(j + 1) % 3]))
+                                    && i == j) {
+                        //if((field[i][j].equals("X") && player1Turn)
+                        //        || (field[i][j].equals("O")) && !player1Turn) {
+                        Log.d("sysout", "checkForPossibleWin: asdasdsa");
 
-                    final Animation myAnim = AnimationUtils.loadAnimation(activity, R.anim.bounce);
+                        checkForPossibleWinCounter++;
 
-                    MyBounceInterpolator interpolator = new MyBounceInterpolator(10, 100);
-                    myAnim.setInterpolator(interpolator);
+                        buttonID = "button_" + i + j;
+                        resID = activity.getResources().getIdentifier(buttonID, "id", activity.getPackageName());
+                        possbileWinButton = activity.findViewById(resID);
 
-                    Log.d("sysout", "favor: " + button.getWidth() + " " + button.getHeight() );
-                    button.setBackgroundColor(Color.argb(255, rdm.nextInt(224)+32, rdm.nextInt(224)+32, rdm.nextInt(224)+32));
+                        final Animation myAnim = AnimationUtils.loadAnimation(activity, R.anim.bounce);
 
-                    button.startAnimation(myAnim);
+                        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.5, 20);
+                        myAnim.setInterpolator(interpolator);
 
-                    mp.pause();
-                    if(sound == 0) {
-                        spButton.play(tictactoepossiblewin1, 1,1,0,0,1);
-                        mp.start();
-                    }
-                    else {
-                        spButton.play(tictactoepossiblewin2, 1,1,0,0,1);
+                        possbileWinButton.setBackgroundColor(Color.argb(255, rdm.nextInt(224) + 32, rdm.nextInt(224) + 32, rdm.nextInt(224) + 32));
+
+                        possbileWinButton.startAnimation(myAnim);
+
+                        mp.pause();
+                        if (possibleWinSound == 0) {
+                            spButton.play(tictactoepossiblewin1, 1, 1, 0, 0, 1);
+                            mp.start();
+                        } else {
+                            spButton.play(tictactoepossiblewin2, 1, 1, 0, 0, 1);
+                        }
+                        //}
+                        return true;
                     }
 
                 }
 
             }
-
         }
-
-
-
         return false;
     }
 
@@ -263,9 +295,15 @@ public class TicTacToe_Engine extends View  {
                 field[i][j] = "";
                 button = (Button) activity.findViewById(getResources().getIdentifier("button_" + i + j,"id" , activity.getPackageName()));
                 button.setText("");
+                button.setBackgroundColor(0xFFd3d3d3);
             }
         }
+        if(!mp.isPlaying()) {
+            mp.start();
+        }
         roundCount = 0;
+        checkForPossibleWinCounter = 0;
+        possibleWin = false;
         player1Turn = true;
     }
 

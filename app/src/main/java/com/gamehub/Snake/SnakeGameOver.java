@@ -20,7 +20,7 @@ public class SnakeGameOver extends Activity {
         TextView scoreLabel = (TextView) findViewById(R.id.scoreLabel);
 
         int endScore = getIntent().getIntExtra("Score: ", 0);
-        scoreLabel.setText(endScore + "");
+        scoreLabel.setText("Score: "+ endScore);
     }
 
     public void newGame(View view){

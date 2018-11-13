@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".TicTacToe.TicTacToeActivity"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity"
+            android:label="TicTacToe"/>
         <activity android:name=".Snake.SnakeActivity"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".TwentyFortyEight.Twenty48Activity"

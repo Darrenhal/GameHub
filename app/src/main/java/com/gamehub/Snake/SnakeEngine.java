@@ -31,11 +31,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int snakeLength;
     private int appleX,appleY;
     private int blockSize;
-    private final int NUM_BLOCKS_WIDE = 40;
+    private final int NUM_BLOCKS_WIDE = 20;
     private int numBlocksHigh;
     private long nextFrameTime;
     private final long FPS = 10;
-    private final long MILLIS_PER_SECOND = 1000;
+    private final long MILLIS_PER_SECOND = 1250;
     private int resourceIdNavigation = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
     private int resourceIdStatus = getResources().getIdentifier("status_bar_height", "dimen", "android");
 
@@ -195,7 +195,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             Intent intent = new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class);
             intent.putExtra("Score: ",score);
             snakeActivity.finish();
-            snakeActivity.startActivity(new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class));
+            snakeActivity.startActivity(intent);
         }
     }
 
@@ -205,7 +205,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             canvas.drawColor(Color.BLACK);
             paint.setColor(Color.WHITE);
             paint.setTextSize(90);
-            canvas.drawText("Score: " + score, 10, 70, paint);
+            canvas.drawText("" + score, 10, 70, paint);
             for(int i = 0; i < snakeLength; i++){
                 canvas.drawRect(snakeXs[i] * blockSize,(snakeYs[i] * blockSize),(snakeXs[i] * blockSize) + blockSize, (snakeYs[i] * blockSize) + blockSize, paint);
             }

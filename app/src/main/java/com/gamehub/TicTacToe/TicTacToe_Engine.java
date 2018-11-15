@@ -45,6 +45,10 @@ public class TicTacToe_Engine extends View  {
 
     private Random rdm;
 
+    String player;
+
+    private boolean wait;
+
     public TicTacToe_Engine(Context context, TicTacToeActivity activity) {
         super(context);
         this.activity = activity;
@@ -61,6 +65,8 @@ public class TicTacToe_Engine extends View  {
         player2Points = 0;
 
         possibleWin = false;
+
+        wait = false;
 
         checkForPossibleWinCounter = 0;
 
@@ -116,7 +122,7 @@ public class TicTacToe_Engine extends View  {
 
             roundCount++;
 
-            possibleWin = checkForPossibleWin();
+           // possibleWin = checkForPossibleWin();
         } else if (possbileWinButton == v) {
             if(possibleWinSound == 0) {
                 spButton.play(tictactoewin1, 1, 1,0,0,1);
@@ -149,6 +155,10 @@ public class TicTacToe_Engine extends View  {
             draw();
         } else {
             player1Turn = !player1Turn;
+            possibleWin = checkForPossibleWin(player1Turn);
+            if(possbileWinButton != null && !wait) {
+                markPossibleWin();
+            }
         }
 
     }
@@ -196,67 +206,73 @@ public class TicTacToe_Engine extends View  {
         return false;
     }
 
-    public boolean checkForPossibleWin() {
+    public boolean checkForPossibleWin(boolean player1Turn) {
+        if(possbileWinButton != null) return true;
+
+        if(player1Turn) {
+            player = "X";
+        } else {
+            player = "O";
+        }
 
         if(checkForPossibleWinCounter < 1) {
-            possibleWinSound = rdm.nextInt(2);
-            String buttonID;
-            int resID;
-
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
 
                     if ((field[i][j].equals("")
-                            && !field[(i + 1) % 3][j].equals("")
-                            && field[(i + 2) % 3][j].equals(field[(i + 1) % 3][j]))
+                            && field[(i + 1) % 3][j].equals(player)
+                            && field[(i + 2) % 3][j].equals(player))
 
                             ||
 
                             (field[i][j].equals("")
-                                    && !field[i][(j + 1) % 3].equals("")
-                                    && field[i][(j + 2) % 3].equals(field[i][(j + 1) % 3]))
+                                    && field[i][(j + 1) % 3].equals(player)
+                                    && field[i][(j + 2) % 3].equals(player))
 
                             ||
 
                             (field[i][j].equals("")
-                                    && !field[(i + 1) % 3][(j + 1) % 3].equals("")
-                                    && field[(i + 2) % 3][(j + 2) % 3].equals(field[(i + 1) % 3][(j + 1) % 3]))
-                                    && i == j) {
-                        //if((field[i][j].equals("X") && player1Turn)
-                        //        || (field[i][j].equals("O")) && !player1Turn) {
-                        Log.d("sysout", "checkForPossibleWin: asdasdsa");
+                                    && field[(i + 1) % 3][(j + 1) % 3].equals(player)
+                                    && field[(i + 2) % 3][(j + 2) % 3].equals(player)
+                                    && i == j)) {
 
                         checkForPossibleWinCounter++;
+
+                        possibleWinSound = rdm.nextInt(2);
+                        String buttonID;
+                        int resID;
 
                         buttonID = "button_" + i + j;
                         resID = activity.getResources().getIdentifier(buttonID, "id", activity.getPackageName());
                         possbileWinButton = activity.findViewById(resID);
 
-                        final Animation myAnim = AnimationUtils.loadAnimation(activity, R.anim.bounce);
-
-                        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.5, 20);
-                        myAnim.setInterpolator(interpolator);
-
-                        possbileWinButton.setBackgroundColor(Color.argb(255, rdm.nextInt(224) + 32, rdm.nextInt(224) + 32, rdm.nextInt(224) + 32));
-
-                        possbileWinButton.startAnimation(myAnim);
-
-                        mp.pause();
-                        if (possibleWinSound == 0) {
-                            spButton.play(tictactoepossiblewin1, 1, 1, 0, 0, 1);
-                            mp.start();
-                        } else {
-                            spButton.play(tictactoepossiblewin2, 1, 1, 0, 0, 1);
-                        }
-                        //}
                         return true;
                     }
-
                 }
-
             }
         }
         return false;
+    }
+
+    private void markPossibleWin() {
+        final Animation myAnim = AnimationUtils.loadAnimation(activity, R.anim.bounce);
+
+        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.5, 20);
+        myAnim.setInterpolator(interpolator);
+
+        possbileWinButton.setBackgroundColor(Color.argb(255, rdm.nextInt(224) + 32, rdm.nextInt(224) + 32, rdm.nextInt(224) + 32));
+
+        possbileWinButton.startAnimation(myAnim);
+
+        mp.pause();
+        if (possibleWinSound == 0) {
+            spButton.play(tictactoepossiblewin1, 1, 1, 0, 0, 1);
+            mp.start();
+        } else {
+            spButton.play(tictactoepossiblewin2, 1, 1, 0, 0, 1);
+        }
+
+        wait = true;
     }
 
     private void player1Wins() {
@@ -293,7 +309,7 @@ public class TicTacToe_Engine extends View  {
         for (int i = 0; i < 3; i++ ) {
             for (int j = 0; j < 3; j++) {
                 field[i][j] = "";
-                button = (Button) activity.findViewById(getResources().getIdentifier("button_" + i + j,"id" , activity.getPackageName()));
+                button = activity.findViewById(getResources().getIdentifier("button_" + i + j,"id" , activity.getPackageName()));
                 button.setText("");
                 button.setBackgroundColor(0xFFd3d3d3);
             }
@@ -303,13 +319,17 @@ public class TicTacToe_Engine extends View  {
         }
         roundCount = 0;
         checkForPossibleWinCounter = 0;
+        possbileWinButton = null;
+        wait = false;
         possibleWin = false;
-        player1Turn = true;
+
     }
 
     public void resetGame() {
         player1Points = 0;
         player2Points = 0;
+        player1Turn = true;
+
         updatePointsText();
         resetBoard();
     }

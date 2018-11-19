@@ -35,7 +35,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int numBlocksHigh;
     private long nextFrameTime;
     private final long FPS = 10;
-    private final long MILLIS_PER_SECOND = 1250;
+    private final long MILLIS_PER_SECOND = 1200;
     private int resourceIdNavigation = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
     private int resourceIdStatus = getResources().getIdentifier("status_bar_height", "dimen", "android");
 
@@ -130,6 +130,12 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         Random random = new Random();
         appleX = random.nextInt(NUM_BLOCKS_WIDE -1) +1;
         appleY = random.nextInt(numBlocksHigh -1) +1;
+        for(int i = snakeLength; i > 0; i--){
+            while(snakeXs[i] == appleX && snakeYs [i] == appleY){
+                appleX = random.nextInt(NUM_BLOCKS_WIDE -1) +1;
+                appleY = random.nextInt(numBlocksHigh -1) +1;
+            }
+        }
     }
 
     private void eatApple(){

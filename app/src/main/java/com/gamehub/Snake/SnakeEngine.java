@@ -94,7 +94,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     public void onPause(){
         mediaPlayer.pause();
-        mediaposition = mediaPlayer.getCurrentPosition();
         isPlaying = false;
         try{
             thread.join();
@@ -108,7 +107,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     }
 
     public void resume(){
-        //mediaPlayer.seekTo(mediaposition);
+        mediaPlayer.start();
         isPlaying = true;
         thread = new Thread(this);
         thread.start();

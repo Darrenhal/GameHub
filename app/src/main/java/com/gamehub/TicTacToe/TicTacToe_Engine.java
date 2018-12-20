@@ -7,7 +7,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -98,7 +97,7 @@ public class TicTacToe_Engine extends View  {
         tictactoewin1 = spButton.load(context, R.raw.tictactoewin1, 1);
         tictactoewin2 = spButton.load(context, R.raw.tictactoewin2, 1);
 
-        mp = MediaPlayer.create(activity, R.raw.tictactoebackground);
+        mp = MediaPlayer.create(activity, R.raw.tictactoebackground1);
         mp.setLooping(true);
         mp.setVolume((float) 0.5, (float) 0.5);
         mp.start();
@@ -173,7 +172,7 @@ public class TicTacToe_Engine extends View  {
 
         field[Integer.parseInt(buttonX)][Integer.parseInt(buttonY)] = buttonText;
 
-        // Man kann frühestens nach 5 Runden gewinnen, bis dahin Ressourcen schonen
+
         if(roundCount >= 5) {
             for (int i = 0; i < 3; i++) {
                 if (field[i][0].equals(field[i][1])
@@ -234,7 +233,14 @@ public class TicTacToe_Engine extends View  {
                             (field[i][j].equals("")
                                     && field[(i + 1) % 3][(j + 1) % 3].equals(player)
                                     && field[(i + 2) % 3][(j + 2) % 3].equals(player)
-                                    && i == j)) {
+                                    && i == j)
+
+                            ||
+
+                            (field[i][j].equals("")
+                                    && field[(i + 1) % 3][(j + 2) % 3].equals(player)
+                                    && field[(i + 2) % 3][(j + 1) % 3].equals(player)
+                                    && i + j == 2)) {
 
                         checkForPossibleWinCounter++;
 

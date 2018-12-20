@@ -2,6 +2,7 @@ package com.gamehub.TwentyFortyEight;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,6 +22,7 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
     private int score;
     private Paint paint;
     private SurfaceHolder surfaceHolder;
+    private SharedPreferences preferences;
 
     // variables to handle swipe detection
     private float downX, downY, upX, upY;
@@ -45,6 +47,8 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
 
         surfaceHolder = getHolder();
         paint = new Paint();
+
+        preferences = context.getSharedPreferences("com.gamehub", Context.MODE_PRIVATE);
 
         for(int i = 0; i < 16; i++) {
             isTileSetArray[i] = false;
@@ -86,6 +90,7 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
                 }
             }
             surfaceHolder.unlockCanvasAndPost(canvas);
+            high_score = preferences.getInt("score2048", 0);
             spawnTile();
             isInitialized = true;
         }
@@ -122,6 +127,7 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
     private void update() {
         if (score > high_score) {
             high_score = score;
+            preferences.edit().putInt("score2048", high_score).apply();
         }
         if (isBtnDown && isBtnUp) {
             isBtnDown = isBtnUp = false;
@@ -152,12 +158,15 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
                 paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
                 canvas.drawText("Score", score.startX, score.startY - 7, paint);
                 canvas.drawText("Best", best.startX, best.startY-  7, paint);
-                paint.setTextSize(40f);
                 paint.setTextAlign(Paint.Align.CENTER);
                 float scoreTextX = score.startX + ((score.endX - score.startX) / 2);
                 float scoreTextY = score.startY + ((score.endY - score.startY) / 2) - (paint.descent() +
                         paint.ascent() / 2);
+                float bestTextX = best.startX + ((best.endX - best.startX) / 2);
+                float bestTextY = best.startY + ((best.endY - best.startY) / 2) - (paint.descent() +
+                        paint.ascent() / 2);
                 canvas.drawText(Integer.toString(this.score), scoreTextX, scoreTextY, paint);
+                canvas.drawText(Integer.toString(this.high_score), bestTextX, bestTextY, paint);
                 paint.setTextAlign(Paint.Align.LEFT);
                 paint.setTextSize(128f);
                 canvas.drawText("0x800", title.startX, title.startY, paint);
@@ -413,7 +422,7 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
                 this.draw();
                 // 20 frames per second
                 // UNSAFE, but close to
-                this.nextFrame += 50;
+                this.nextFrame += 30;
             }
         }
     }

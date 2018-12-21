@@ -107,8 +107,7 @@ public class TicTacToe_Engine extends View  {
 
         mpbg2 = MediaPlayer.create(activity, R.raw.tictactoebackground2);
         mpbg2.setLooping(true);
-        mpbg2.setVolume((float) 0.5, (float) 0.5);
-       // mpbg2.start();
+        mpbg2.setVolume((float) 0.7, (float) 0.7);
         rdm = new Random();
     }
 
@@ -346,6 +345,7 @@ public class TicTacToe_Engine extends View  {
             }
         }
         if(!mpbg1.isPlaying() && roundCount == 0 && player1Points == 0 && player2Points == 0) {
+            mpbg2.pause();
             mpbg1.start();
         }
 
@@ -386,7 +386,11 @@ public class TicTacToe_Engine extends View  {
     }
 
     public void onResume() {
-        mpbg1.start();
+        if(mpbg1Active == true) {
+            mpbg1.start();
+        } else {
+            mpbg2.start();
+        }
     }
 
 

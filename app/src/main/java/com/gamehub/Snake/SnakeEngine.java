@@ -141,6 +141,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             while(snakeXs[i] == appleX && snakeYs [i] == appleY){
                 appleX = random.nextInt(NUM_BLOCKS_WIDE -1) +1;
                 appleY = random.nextInt(numBlocksHigh -1) +1;
+                i = snakeLength;
             }
         }
     }
@@ -198,6 +199,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     }
 
     public void update(){
+        if (score > highScore) {
+            highScore = score;
+            preferences.edit().putInt("snakeScore", highScore).apply();
+        }
+
         if(snakeXs[0] == appleX && snakeYs[0] == appleY){
             eatApple();
         }
@@ -205,11 +211,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         moveSnake();
 
         if(death()){
-            if (score > highScore) {
-                highScore = score;
-                preferences.edit().putInt("snakeScore", highScore).apply();
-            }
-
             Intent intent = new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class);
             Bundle extras = new Bundle();
             extras.putInt("score",score);
@@ -237,6 +238,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             canvas.drawLine(NUM_BLOCKS_WIDE * blockSize,numBlocksHigh * blockSize,0, numBlocksHigh * blockSize, paint);
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.RED);
+            canvas.drawText("" + highScore, (NUM_BLOCKS_WIDE - 2)*(blockSize) , 70, paint);
             canvas.drawRect(appleX * blockSize,(appleY * blockSize),(appleX * blockSize)+blockSize,(appleY * blockSize)+blockSize,paint);
             surfaceHolder.unlockCanvasAndPost(canvas);
         }

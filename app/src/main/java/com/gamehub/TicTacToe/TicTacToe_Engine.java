@@ -35,7 +35,7 @@ public class TicTacToe_Engine extends View  {
 
     private Button possbileWinButton;
 
-    private TextView textViewPlayer1, textViewPlayer2;
+    private TextView textViewPlayer1, textViewPlayer2, turn;
 
     private SoundPool spButton;
     private int tictactoebutton, tictactoepossiblewin1, tictactoepossiblewin2, tictactoewin1, tictactoewin2;
@@ -70,6 +70,8 @@ public class TicTacToe_Engine extends View  {
         wait = false;
 
         checkForPossibleWinCounter = 0;
+
+
 
         field = new String[3][3];
         for (int i = 0; i < 3; i++) {
@@ -114,6 +116,8 @@ public class TicTacToe_Engine extends View  {
 
 
     public void buttonClick(View v) {
+        turn = activity.findViewById(R.id.turn);
+
         if(!possibleWin) {
             spButton.play(tictactoebutton, 1, 1, 0, 0, 1);
 
@@ -163,6 +167,11 @@ public class TicTacToe_Engine extends View  {
             if(possbileWinButton != null && !wait) {
                 markPossibleWin();
             }
+        }
+        if (player1Turn) {
+            turn.setText("Player 1's turn");
+        } else {
+            turn.setText("Player 2's turn");
         }
 
     }
@@ -330,8 +339,6 @@ public class TicTacToe_Engine extends View  {
 
         textViewPlayer1.setText("Player 1: " + player1Points);
         textViewPlayer2.setText("Player 2: " + player2Points);
-
-
     }
 
     private void resetBoard() {
@@ -361,6 +368,8 @@ public class TicTacToe_Engine extends View  {
         player1Points = 0;
         player2Points = 0;
         player1Turn = true;
+        turn = activity.findViewById(R.id.turn);
+        turn.setText("Player 1's turn");
 
 
         updatePointsText();

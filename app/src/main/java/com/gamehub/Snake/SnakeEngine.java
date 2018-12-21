@@ -198,16 +198,20 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         return dead;
     }
 
-    public void update(){
+    private void scoreUpdate(){
         if (score > highScore) {
             highScore = score;
             preferences.edit().putInt("snakeScore", highScore).apply();
         }
+    }
+
+    public void update(){
 
         if(snakeXs[0] == appleX && snakeYs[0] == appleY){
             eatApple();
         }
 
+        scoreUpdate();
         moveSnake();
 
         if(death()){

@@ -140,6 +140,10 @@ public class Twenty48_Engine extends SurfaceView implements Runnable {
             if (isInitialized) {
                 Canvas canvas = this.surfaceHolder.lockCanvas();
 
+                // draw the background white, to fix a problem with smartphone deployment
+                paint.setColor(Color.WHITE);
+                canvas.drawRect(0,0 , canvas.getWidth(),canvas.getHeight(), paint);
+
                 // draw uiElements
                 Twenty48_UiElement board = uiElementArray[0];
                 Twenty48_UiElement title = uiElementArray[1];

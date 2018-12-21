@@ -1,12 +1,15 @@
 package com.gamehub.Snake;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.os.Bundle;
 import android.os.Process;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -47,6 +50,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int actionBarHeight = 0;
 
     private int score;
+    private int highScore;
     private int[] snakeXs;
     private int[] snakeYs;
 
@@ -54,6 +58,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
     private Paint paint;
+    private SharedPreferences preferences;
 
     public SnakeEngine(Context context, SnakeActivity snakeActivity, Point size){
         super(context);
@@ -78,6 +83,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         snakeXs = new int[200];
         snakeYs = new int[200];
+
+        preferences = context.getSharedPreferences("highScore", Context.MODE_PRIVATE);
+        highScore = preferences.getInt("snakeScore",0);
 
         newGame();
     }
@@ -197,8 +205,16 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         moveSnake();
 
         if(death()){
+            if (score > highScore) {
+                highScore = score;
+                preferences.edit().putInt("snakeScore", highScore).apply();
+            }
+
             Intent intent = new Intent(snakeActivity.getApplicationContext(),SnakeGameOver.class);
-            intent.putExtra("Score: ",score);
+            Bundle extras = new Bundle();
+            extras.putInt("score",score);
+            extras.putInt("highScore",highScore);
+            intent.putExtras(extras);
             snakeActivity.finish();
             snakeActivity.startActivity(intent);
         }

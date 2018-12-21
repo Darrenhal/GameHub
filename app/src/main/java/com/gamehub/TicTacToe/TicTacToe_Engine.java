@@ -38,9 +38,11 @@ public class TicTacToe_Engine extends View  {
     private TextView textViewPlayer1, textViewPlayer2;
 
     private SoundPool spButton;
-    private int tictactoebutton, tictactoebackground, tictactoepossiblewin1, tictactoepossiblewin2,tictactoewin1, tictactoewin2;
+    private int tictactoebutton, tictactoepossiblewin1, tictactoepossiblewin2, tictactoewin1, tictactoewin2;
 
-    private MediaPlayer mp;
+    private MediaPlayer mpbg1, mpbg2;
+    private int mpbg1Pos, mpbg2Pos;
+    private boolean mpbg1Active;
 
     private Random rdm;
 
@@ -97,11 +99,16 @@ public class TicTacToe_Engine extends View  {
         tictactoewin1 = spButton.load(context, R.raw.tictactoewin1, 1);
         tictactoewin2 = spButton.load(context, R.raw.tictactoewin2, 1);
 
-        mp = MediaPlayer.create(activity, R.raw.tictactoebackground1);
-        mp.setLooping(true);
-        mp.setVolume((float) 0.5, (float) 0.5);
-        mp.start();
+        mpbg1 = MediaPlayer.create(activity, R.raw.tictactoebackground1);
+        mpbg1.setLooping(true);
+        mpbg1.setVolume((float) 0.5, (float) 0.5);
+        mpbg1.start();
+        mpbg1Active = true;
 
+        mpbg2 = MediaPlayer.create(activity, R.raw.tictactoebackground2);
+        mpbg2.setLooping(true);
+        mpbg2.setVolume((float) 0.5, (float) 0.5);
+       // mpbg2.start();
         rdm = new Random();
     }
 
@@ -121,7 +128,6 @@ public class TicTacToe_Engine extends View  {
 
             roundCount++;
 
-           // possibleWin = checkForPossibleWin();
         } else if (possbileWinButton == v) {
             if(possibleWinSound == 0) {
                 spButton.play(tictactoewin1, 1, 1,0,0,1);
@@ -270,12 +276,31 @@ public class TicTacToe_Engine extends View  {
 
         possbileWinButton.startAnimation(myAnim);
 
-        mp.pause();
+        if(mpbg1.isPlaying()) {
+            mpbg1Pos = mpbg1.getCurrentPosition();
+            mpbg1.pause();
+            mpbg1Active = false;
+        } else {
+            mpbg2Pos = mpbg2.getCurrentPosition();
+            mpbg2.pause();
+            mpbg1Active = true;
+        }
         if (possibleWinSound == 0) {
             spButton.play(tictactoepossiblewin1, 1, 1, 0, 0, 1);
-            mp.start();
+            if(mpbg1Active == true) {
+                mpbg2.start();
+            } else {
+                mpbg1.start();
+            }
         } else {
             spButton.play(tictactoepossiblewin2, 1, 1, 0, 0, 1);
+            if(mpbg1Active == false) {
+                mpbg2.seekTo(mpbg1Pos);
+                mpbg2.start();
+            } else {
+                mpbg1.seekTo(mpbg2Pos);
+                mpbg1.start();
+            }
         }
 
         wait = true;
@@ -320,9 +345,10 @@ public class TicTacToe_Engine extends View  {
                 button.setBackgroundColor(0xFFd3d3d3);
             }
         }
-        if(!mp.isPlaying()) {
-            mp.start();
+        if(!mpbg1.isPlaying() && roundCount == 0 && player1Points == 0 && player2Points == 0) {
+            mpbg1.start();
         }
+
         roundCount = 0;
         checkForPossibleWinCounter = 0;
         possbileWinButton = null;
@@ -336,6 +362,7 @@ public class TicTacToe_Engine extends View  {
         player2Points = 0;
         player1Turn = true;
 
+
         updatePointsText();
         resetBoard();
     }
@@ -344,17 +371,22 @@ public class TicTacToe_Engine extends View  {
         spButton.release();
         spButton = null;
 
-        mp.stop();
-        mp.release();
-        mp = null;
+        mpbg1.stop();
+        mpbg1.release();
+        mpbg1 = null;
+
+        mpbg2.stop();
+        mpbg2.release();
+        mpbg2 = null;
     }
 
     public void onPause() {
-        mp.pause();
+        mpbg1.pause();
+        mpbg2.pause();
     }
 
     public void onResume() {
-        mp.start();
+        mpbg1.start();
     }
 
 

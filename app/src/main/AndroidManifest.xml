@@ -9,22 +9,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
         <activity android:name=".TicTacToe.TicTacToeActivity"
             android:parentActivityName=".MainActivity"
-            android:label="TicTacToe"/>
+            android:label="TicTacToe"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Snake.SnakeActivity"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".TwentyFortyEight.Twenty48Activity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Snake.SnakeGameOver"
-            android:parentActivityName=".Snake.SnakeActivity"/>
+            android:parentActivityName=".Snake.SnakeActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

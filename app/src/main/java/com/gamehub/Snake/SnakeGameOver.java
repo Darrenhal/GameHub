@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.gamehub.R;
 
+import org.w3c.dom.Text;
+
 public class SnakeGameOver extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,9 +20,13 @@ public class SnakeGameOver extends Activity {
         setContentView(R.layout.activity_snake_gameover);
 
         TextView scoreLabel = (TextView) findViewById(R.id.scoreLabel);
+        TextView highScoreLabel = (TextView) findViewById(R.id.highscoreLabel);
 
-        int endScore = getIntent().getIntExtra("Score: ", 0);
+        Bundle extras = getIntent().getExtras();
+        int endScore = extras.getInt("score", 0);
+        int highScore = extras.getInt("highScore", 0);
         scoreLabel.setText("Score: "+ endScore);
+        highScoreLabel.setText("Highscore: "+ highScore);
     }
 
     public void newGame(View view){
